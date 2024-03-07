@@ -1,6 +1,11 @@
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+
+import structures.KeyNotFoundException;
+import structures.NullKeyException;
+
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 
@@ -10,7 +15,7 @@ import java.awt.Dimension;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-
+import java.io.IOException;
 import java.util.Locale;
 import java.util.Scanner;
 
@@ -43,8 +48,11 @@ public class AAC implements ActionListener {
 	 * 
 	 * @param filename the name of the file that contains the
 	 *                 images and text that will be in the AAC
+	 * @throws KeyNotFoundException 
+	 * @throws NullKeyException 
+	 * @throws IOException 
 	 */
-	public AAC(String filename) {
+	public AAC(String filename) throws IOException, NullKeyException, KeyNotFoundException {
 		this.aacMappings = new AACMappings(filename);
 		this.images = this.aacMappings.getImageLocs();
 		this.startIndex = 0;
@@ -128,7 +136,7 @@ public class AAC implements ActionListener {
 		pane.requestFocusInWindow();
 	}
 
-	public static void main(String[] args) {
+	public static void main(String[] args) throws IOException, NullKeyException, KeyNotFoundException {
 
 		try {
 			// Set property as Kevin Dictionary
@@ -158,7 +166,8 @@ public class AAC implements ActionListener {
 	 * (e.g. home, next), it updates the screen. If the button is an image within
 	 * the category, it speaks aloud the text
 	 */
-	public void actionPerformed(ActionEvent e) {
+	public void actionPerformed(ActionEvent e)  {
+		try {
 		String actionCommand = e.getActionCommand();
 		System.out.println("Button clicked: " + actionCommand);
 		if (actionCommand.equals("back")) {
@@ -204,7 +213,11 @@ public class AAC implements ActionListener {
 			}
 		}
 		loadImages(NUM_ACROSS, NUM_DOWN);
-
+	} catch (KeyNotFoundException | NullKeyException | IOException ex) {
+        // Handle the exception, e.g., log it or show an error message
+        JOptionPane.showMessageDialog(null, "Error occurred: " + ex.getMessage());
+        ex.printStackTrace();
+    }
 	}
 
 }
